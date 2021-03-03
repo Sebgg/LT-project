@@ -40,7 +40,7 @@ class Evaluator():
         print("\033c")
         print("Welcome to the translation evaluator!\nIt gives you a random ",\
             "to evaluate in one of the languages you know, then you get the\n",\
-            "opportunity to score it from 1 (really bad) to 5 (really good).",\
+            "opportunity to score it from 1 (complete fail) to 5 (perfect).",\
             "\n\nPlease don't stop the program by Ctrl+C or Ctrl+Z unless ", \
             "unless absolutely necessary!\n")
 
