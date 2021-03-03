@@ -6,6 +6,13 @@
 5. save scores to the loaded score json file
 """
 
+"""
+Combine two score sheets with:
+$ python3 evaluator.py <original_data> <data_to_merge>
+
+Run the evaluator with:
+$ python3 evaluator.py
+"""
 
 """
 ---------------
