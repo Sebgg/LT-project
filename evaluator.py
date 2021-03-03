@@ -8,7 +8,7 @@
 
 """
 Combine two score sheets with:
-$ python3 evaluator.py <original_data> <data_to_merge>
+$ python3 evaluator.py (combine || -c) <original_data> <data_to_merge>
 
 Run the evaluator with:
 $ python3 evaluator.py
@@ -26,23 +26,42 @@ score (1...5):
 import json
 import random
 import sys
+import time
+from textwrap import wrap
 
 class Evaluator():
     languages = list()
     translated = {}
     scores = {}
+    score_file_name = "scores.json"
+    translation_file_name = "translations.json"
 
     def __init__(self):
-        # with open('data.json', encoding='utf-8-sig') as f:
-        #     data = json.load(f)
-        # print(data)
-        pass
+        print("\033c")
+        print("Welcome to the translation evaluator!\nIt gives you a random ",\
+            "to evaluate in one of the languages you know, then you get the\n",\
+            "opportunity to score it from 1 (really bad) to 5 (really good).",\
+            "\n\nPlease don't stop the program by Ctrl+C or Ctrl+Z unless ", \
+            "unless absolutely necessary!\n")
+
+        with open(self.translation_file_name, encoding='utf-8-sig') as f:
+            self.translated = json.load(f)
+
+        with open(self.score_file_name, encoding='utf-8-sig') as f:
+            self.scores = json.load(f)
+
+        lang_temp = input("Write all languages you want to " + \
+            "evaluate translation in, separated by a Space." + \
+            " End by pressing Enter. \n> ")
+
+        self.languages = lang_temp.lower().split()
         # Dict -> List -> Dict
         # load json files here
         # ask languages
 
-    def dump_json():
-        pass
+    def dump_json(self):
+        with open(self.score_file_name, 'w+', encoding='utf-8-sig') as f:
+            json.dump(self.scores, f)
 
     def combine_scores(self, original, new):
         with open(original, encoding='utf-8-sig') as f:
@@ -59,22 +78,42 @@ class Evaluator():
     
     def evaluate_translations(self):
         while True:
+            print("\033c")
             do_next = input("Evaluate a text? Y/N: ")
             if do_next == "N" or do_next == "n":
+                print("\033c Exiting evaluator!")
                 break
             self.evaluate_translation()
-
+            time.sleep(2)
         self.dump_json()
-        pass
-        # loop here
 
     def evaluate_translation(self):
-        pass
-        # single evaluation here
+        language = random.choice(self.languages)
+        sentence_id = random.randint(0, 128)
+        translator = random.choice(list(self.translated.keys()))
+
+        sentence = '\n'.join(wrap(self.translated[translator][sentence_id][language], 80))
+        original = '\n'.join(wrap(self.translated[translator][sentence_id]["original"], 80))
+
+        if sentence != "N/A":
+            print("\033c")
+            print("The Sentence:\n"+"="*80)
+            print(sentence+"\n"+"="*80)
+            print("The Original:\n"+"="*80)
+            print(original+"\n"+"="*80)
+            score = input("How good is the translation? (1 -> 5)\n> ")
+            self.scores[translator].append({
+                "score": score,
+                "id": sentence_id,
+                "language": language
+            })
+            print(f"That translation was from {translator}!")
+
 
 def main():
     argvs = list(sys.argv)
-    if argvs[1] =="combine":
+    if len(argvs) > 2 and \
+        (argvs[1] =="combine" or argvs[1] == "-c"):
         eva = Evaluator()
         eva.combine_scores(argvs[2], argvs[3])
     else:
