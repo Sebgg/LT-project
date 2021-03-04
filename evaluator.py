@@ -42,8 +42,8 @@ class Evaluator():
         print("Welcome to the translation evaluator!\nIt gives you a random ",\
             "to evaluate in one of the languages you know, then you get the\n",\
             "opportunity to score it from 1 (complete fail) to 5 (perfect).",\
-            "\n\nPlease don't stop the program by Ctrl+C or Ctrl+Z unless ", \
-            "unless absolutely necessary!\n")
+            "\n\nYou can stop the program at any time by pressing Ctrl+c if" \
+            " you want to stop your work \n")
 
         with open(self.translation_file_name, encoding='utf-8-sig') as f:
             self.translated = json.load(f)
