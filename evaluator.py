@@ -28,6 +28,7 @@ import random
 import sys
 import time
 from textwrap import wrap
+import atexit
 
 class Evaluator():
     languages = list()
@@ -55,9 +56,13 @@ class Evaluator():
             " End by pressing Enter. \n> ")
 
         self.languages = lang_temp.lower().split()
+        atexit.register(self.exit_handler)
         # Dict -> List -> Dict
         # load json files here
         # ask languages
+        
+    def exit_handler(self):
+        self.dump_json()
 
     def dump_json(self):
         with open(self.score_file_name, 'w+', encoding='utf-8-sig') as f:
@@ -78,14 +83,8 @@ class Evaluator():
     
     def evaluate_translations(self):
         while True:
-            print("\033c")
-            do_next = input("Evaluate a text? Y/N: ")
-            if do_next == "N" or do_next == "n":
-                print("\033c Exiting evaluator!")
-                break
             self.evaluate_translation()
             time.sleep(2)
-        self.dump_json()
 
     def evaluate_translation(self):
         language = random.choice(self.languages)
