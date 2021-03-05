@@ -91,22 +91,26 @@ class Evaluator():
         sentence_id = random.randint(0, 128)
         translator = random.choice(list(self.translated.keys()))
 
-        sentence = '\n'.join(wrap(self.translated[translator][sentence_id][language], 80))
-        original = '\n'.join(wrap(self.translated[translator][sentence_id]["original"], 80))
+        original_lang = self.translated[translator][sentence_id]["original language"]
+        if original_lang in self.languages:
+        
+            sentence = '\n'.join(wrap(self.translated[translator][sentence_id][language], 80))
+            original = '\n'.join(wrap(self.translated[translator][sentence_id]["original"], 80))
 
-        if sentence != "N/A":
-            print("\033c")
-            print("The Sentence:\n"+"="*80)
-            print(sentence+"\n"+"="*80)
-            print("The Original:\n"+"="*80)
-            print(original+"\n"+"="*80)
-            score = input("How good is the translation? (1 -> 5)\n> ")
-            self.scores[translator].append({
-                "score": score,
-                "id": sentence_id,
-                "language": language
-            })
-            print(f"That translation was from {translator}!")
+            if sentence != "N/A" and self.translated:
+                print("\033c")
+                print("The Translation:\n"+"="*80)
+                print(sentence+"\n"+"="*80)
+                print("The Original sentence:\n"+"="*80)
+                print(original+"\n"+"="*80)
+                score = input("How good is the translation? (1 -> 5, 0 to skip the sentence)\n> ")
+                if int(score) >= 1:
+                    self.scores[translator].append({
+                        "score": score,
+                        "id": sentence_id,
+                        "language": language
+                    })
+                    print(f"That translation was from {translator}!")
 
 
 def main():
