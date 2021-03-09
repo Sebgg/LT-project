@@ -1,12 +1,17 @@
 # Objective evaluation with the Levensteyhn distance
 # Tom Könecke 4.3.2021
+import sys
 import json
 import numpy as np
 
 def main():
-    score_file_name = "scores.json"
-    translation_file_name = "translations.json"
-    objective_score_file_name = "objective_scores.json"
+    argvs = list(sys.argv)
+    if len(argvs) != 3:
+        print('Usage is: python objective_eval.py <translation file> <objective scores file>')
+        return 1
+
+    translation_file_name = argvs[1]
+    objective_score_file_name = argvs[2]
 
     with open(translation_file_name, encoding='utf-8-sig') as f:
         data = json.load(f)
@@ -81,10 +86,7 @@ def objective_distance(text1, text2):
                     matrix[x-1, y-1] + 1
                 )
 
-    # divide by sentence length
-    print(text1)
-    print(text2)
-    print(matrix[size_x - 1, size_y - 1] / len(text1))
+    # return result divided by sentence length
     return matrix[size_x - 1, size_y - 1] / len(text1)
 
 if __name__ == '__main__':
