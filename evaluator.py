@@ -26,7 +26,7 @@ class Evaluator():
     languages = list()
     translated = {}
     scores = {}
-    score_file_name = "scores.json"
+    score_file_name = "scores_sebastian.json"
     translation_file_name = "translations.json"
     counter_file_name = "cup.txt"
     counter = 0
@@ -78,7 +78,7 @@ class Evaluator():
         language = random.choice(self.languages)
         
         translator = random.choice(list(self.translated.keys()))
-        iid = self.counter%129
+        iid = self.counter%128
         original_lang = self.translated[translator][iid]["original language"]
 
         if original_lang in self.languages:
