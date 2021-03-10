@@ -78,7 +78,7 @@ class Evaluator():
         language = random.choice(self.languages)
         
         translator = random.choice(list(self.translated.keys()))
-        iid = self.counter%128
+        iid = self.counter%127
         original_lang = self.translated[translator][iid]["original language"]
 
         if original_lang in self.languages:
