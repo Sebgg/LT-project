@@ -21,6 +21,7 @@ import sys
 import time
 from textwrap import wrap
 import atexit
+from collections import Counter
 
 class Evaluator():
     languages = list()
@@ -93,7 +94,7 @@ class Evaluator():
                 print("The Original sentence:\n"+"="*80)
                 print(original+"\n"+"="*80)
                 score = input("How good is the translation? (1 -> 5, 0 to skip the sentence)\n> ")
-                if int(score) >= 1:
+                if int(score) >= 1 and int(score) <= 5:
                     self.scores[translator].append({
                         "score": score,
                         "id": iid,
@@ -101,9 +102,10 @@ class Evaluator():
                     })
                     print(f"That translation was from {translator}!")
                     self.counter += 1
-                elif int(score) < 0:
-                    print("Invalid score!")
+                elif int(score) == 0:
                     self.counter += 1
+                elif int(score) < 0 or int(score) > 5:
+                    print("Invalid score!")
         
 
 def combine_scores(original, new):
@@ -120,11 +122,11 @@ def combine_scores(original, new):
             json.dump(original_data, f)
 
 def show_statistics(filename):
-    scores = {}
+    scorex = {}
     with open(filename, encoding='utf-8-sig') as f:
-        scores = json.load(f)
+        scorex = json.load(f)
 
-    for translator, scores in scores.items():
+    for translator, scores in scorex.items():
         all_scores = []
         sentences = set()
         for score in scores:
@@ -141,9 +143,30 @@ def show_statistics(filename):
             print(f'Mean score: {mean}')
             print(f'Median score: {all_scores[int(len(all_scores)/2)]}')
             print(f'# of evaluations: {len(all_scores)}')
-            print(f'Number of unique sentences evaluated: {len(sentences)}')
-            print(f'% of original sentences evaluated: {float(129/len(sentences))}')
+            print(f'Number of unique original sentences evaluated: {len(sentences)}')
+            print(f'% of original sentences evaluated: {float(len(sentences)/127)*100}')
             print(f'-'*80)
+        sentence_statistics(translator, scores, sentences)
+
+def sentence_statistics(translator, scores, ids):
+    cntr = Counter()
+    statistics = {}
+    final = {}
+    with open(f"detailed_statistics_{translator}.json", "a+") as f:
+        for score in scores:
+            idd = int(score["id"])
+            cntr[idd] += 1
+            if idd in statistics:
+                statistics[idd] += int(score["score"])
+            else:
+                statistics[idd] = int(score["score"])
+        for id in ids:
+            final[id] = {}
+            # final[id]["Average score"] = 0
+            final[id]["Average score"] = float(statistics[id]/cntr[id])
+            final[id]["# of evals"] = cntr[id]
+
+        json.dump(final, f)
 
 
 def main():
@@ -153,6 +176,11 @@ def main():
             combine_scores(argvs[2], argvs[3])
         elif (argvs[1] == "--statistics" or argvs[1] == '-s'):
             show_statistics(argvs[2])
+        elif (argvs[1] == "--help" or argvs[1] == "-h"):
+            print("\033c")
+            print("to combine two files: python3 evaluator.py (--combine || -c) <old_file> <file_to_add>\n")
+            print("to show statistics: python3 evaluator.py (--statistics || -s) <score-file-name>\n")
+            print("to run: python3 evaluator.py")
     else:
         eva = Evaluator()
         eva.evaluate_translations()
