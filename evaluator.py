@@ -100,9 +100,10 @@ class Evaluator():
                         "language": language
                     })
                     print(f"That translation was from {translator}!")
-                    self.counter += 1
+                    counter += 1
                 elif int(score) < 0:
                     print("Invalid score!")
+                    counter += 1
         
 
 def combine_scores(original, new):
